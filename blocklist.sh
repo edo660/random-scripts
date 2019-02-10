@@ -44,8 +44,9 @@ for key in ${!blacklists[@]}; do
         #iptables -A $key -p icmp -m limit --limit 5/min -j LOG --log-prefix "Denied $key ICMP: " --log-level 7
         iptables -A $key -j DROP # Drop after logging
         iptables -I INPUT 2 -m set --match-set $key src -j $key # Link to iptables INPUT chain, position #2
-        iptables -I OUTPUT 2 -m set --match-set $key src -j $key # Link to iptables INPUT chain, position #2
+        iptables -I OUTPUT 1 -m set --match-set $key dst -j $key # Link to iptables INPUT chain, position #1
         iptables -I FORWARD 1 -m set --match-set $key src -j $key # Link to iptables INPUT chain, position #1
+        iptables -I FORWARD 1 -m set --match-set $key dst -j $key # Link to iptables INPUT chain, position #1
 
     fi
     ipset flush $key
